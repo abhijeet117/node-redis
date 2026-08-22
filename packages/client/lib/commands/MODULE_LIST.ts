@@ -4,6 +4,10 @@ import { ArrayReply, TuplesToMapReply, BlobStringReply, NumberReply, UnwrapReply
 export type ModuleListReply = ArrayReply<TuplesToMapReply<[
   [BlobStringReply<'name'>, BlobStringReply],
   [BlobStringReply<'ver'>, NumberReply],
+  /** added in 7.0 */
+  [BlobStringReply<'path'>, BlobStringReply],
+  /** added in 7.0 */
+  [BlobStringReply<'args'>, ArrayReply<BlobStringReply>],
 ]>>;
 
 function moduleEntries(moduleReply: unknown): Array<[string, unknown]> {
@@ -38,7 +42,14 @@ function transformModuleReply(moduleReply: unknown) {
   for (const [key, value] of moduleEntries(moduleReply)) {
     result[key] = value;
   }
-  return result as { name: BlobStringReply; ver: NumberReply } & Record<string, unknown>;
+  return result as {
+    name: BlobStringReply;
+    ver: NumberReply;
+    /** added in 7.0 */
+    path: BlobStringReply;
+    /** added in 7.0 */
+    args: ArrayReply<BlobStringReply>;
+  } & Record<string, unknown>;
 }
 
 function transformModuleListReply(reply: Array<unknown>) {
